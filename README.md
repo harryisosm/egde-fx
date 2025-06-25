@@ -1,73 +1,262 @@
-# Welcome to your Lovable project
+# EgdeFX Website
 
-## Project info
+A full-stack trading platform built with React frontend and Django backend, ready for production deployment on Digital Ocean.
 
-**URL**: https://lovable.dev/projects/70956683-fff5-4eaa-9d4e-8a9d1d5ad412
+## 🏗️ Architecture
 
-## How can I edit this code?
+**Frontend:**
+- React 18 with TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- shadcn/ui component library
+- Supabase for authentication
 
-There are several ways of editing your application.
+**Backend:**
+- Django 5.0 with Django REST Framework
+- PostgreSQL database
+- WhiteNoise for static file serving
+- Gunicorn WSGI server
 
-**Use Lovable**
+**Infrastructure:**
+- Docker & Docker Compose
+- Nginx reverse proxy
+- Let's Encrypt SSL certificates
+- Digital Ocean deployment ready
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/70956683-fff5-4eaa-9d4e-8a9d1d5ad412) and start prompting.
+## 🚀 Quick Start (Development)
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.11+
+- PostgreSQL (optional, SQLite used by default in development)
 
-**Use your preferred IDE**
+### Frontend Setup
+```bash
+# Install dependencies
+npm install
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Backend Setup
+```bash
+# Navigate to backend directory
+cd django_project/backend
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-**Use GitHub Codespaces**
+# Install dependencies
+pip install -r requirements.txt
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Run migrations
+python manage.py migrate
 
-## What technologies are used for this project?
+# Create superuser
+python manage.py createsuperuser
 
-This project is built with:
+# Start development server
+python manage.py runserver
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🌐 Production Deployment on Digital Ocean
 
-## How can I deploy this project?
+### Prerequisites
+- Digital Ocean Droplet (Ubuntu 20.04+ recommended)
+- Domain name pointed to your droplet's IP
+- SSH access to your droplet
 
-Simply open [Lovable](https://lovable.dev/projects/70956683-fff5-4eaa-9d4e-8a9d1d5ad412) and click on Share -> Publish.
+### Deployment Steps
 
-## Can I connect a custom domain to my Lovable project?
+1. **Clone the repository on your droplet:**
+```bash
+git clone <your-repo-url>
+cd egdefx_website
+```
 
-Yes, you can!
+2. **Configure environment variables:**
+```bash
+# Copy environment template
+cp .env.example .env
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Edit with your actual values
+nano .env
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Required environment variables:
+- `DOMAIN`: Your domain name (e.g., example.com)
+- `EMAIL`: Your email for SSL certificates
+- `DJANGO_SECRET_KEY`: Generate a secure secret key
+- `DB_PASSWORD`: Secure database password
+
+3. **Run the deployment script:**
+```bash
+sudo ./deploy.sh
+```
+
+The script will:
+- Install Docker and Docker Compose
+- Configure firewall settings
+- Build and start all services
+- Set up SSL certificates
+- Create database and run migrations
+- Create a default admin user
+
+4. **Configure DNS:**
+Point your domain's A record to your droplet's IP address.
+
+### Manual Deployment (Alternative)
+
+If you prefer manual deployment:
+
+```bash
+# Build and start services
+docker-compose up -d --build
+
+# Run migrations
+docker-compose exec backend python manage.py migrate
+
+# Create superuser
+docker-compose exec backend python manage.py createsuperuser
+
+# Get SSL certificates
+docker-compose run --rm certbot
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+**Root `.env` file:**
+```env
+DOMAIN=your-domain.com
+EMAIL=your-email@example.com
+DJANGO_SECRET_KEY=your-secret-key
+DB_NAME=egdefx_db
+DB_USER=egdefx_user
+DB_PASSWORD=your-password
+VITE_API_URL=https://your-domain.com/api
+```
+
+**Backend `.env` file (django_project/backend/.env):**
+```env
+DJANGO_SECRET_KEY=your-secret-key
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=your-domain.com,www.your-domain.com
+DATABASE_URL=postgres://user:password@db:5432/dbname
+DJANGO_CORS_ALLOWED_ORIGINS=https://your-domain.com
+```
+
+## 📁 Project Structure
+
+```
+egdefx_website/
+├── src/                          # React frontend source
+├── django_project/backend/       # Django backend
+├── public/                       # Static assets
+├── docker-compose.yml           # Docker orchestration
+├── Dockerfile                   # Frontend Docker image
+├── nginx.conf                   # Nginx configuration
+├── deploy.sh                    # Deployment script
+└── .env.example                 # Environment template
+```
+
+## 🛠️ Development Commands
+
+### Frontend
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
+
+### Backend
+```bash
+python manage.py runserver       # Start development server
+python manage.py migrate         # Run database migrations
+python manage.py collectstatic   # Collect static files
+python manage.py test            # Run tests
+```
+
+### Docker
+```bash
+docker-compose up -d             # Start all services
+docker-compose down              # Stop all services
+docker-compose logs              # View logs
+docker-compose exec backend bash # Access backend container
+```
+
+## 🔒 Security Features
+
+- HTTPS/SSL encryption with Let's Encrypt
+- Security headers (HSTS, XSS protection, etc.)
+- CORS configuration
+- Django security middleware
+- PostgreSQL for production database
+- Environment-based configuration
+
+## 📊 Monitoring & Maintenance
+
+### View Logs
+```bash
+# All services
+docker-compose logs
+
+# Specific service
+docker-compose logs backend
+docker-compose logs frontend
+docker-compose logs nginx
+```
+
+### Update Application
+```bash
+git pull origin main
+docker-compose up -d --build
+```
+
+### Backup Database
+```bash
+docker-compose exec db pg_dump -U egdefx_user egdefx_db > backup.sql
+```
+
+### Restore Database
+```bash
+docker-compose exec -T db psql -U egdefx_user egdefx_db < backup.sql
+```
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+1. **SSL Certificate Issues:**
+```bash
+# Renew certificates
+docker-compose run --rm certbot renew
+docker-compose restart nginx
+```
+
+2. **Database Connection Issues:**
+```bash
+# Check database status
+docker-compose exec db pg_isready -U egdefx_user
+```
+
+3. **Static Files Not Loading:**
+```bash
+# Collect static files
+docker-compose exec backend python manage.py collectstatic --noinput
+```
+
+## 📞 Support
+
+For deployment issues or questions, check the logs and ensure all environment variables are properly configured.
+
+## 🔄 Updates
+
+To update the application:
+1. Pull latest changes: `git pull origin main`
+2. Rebuild containers: `docker-compose up -d --build`
+3. Run migrations if needed: `docker-compose exec backend python manage.py migrate`
