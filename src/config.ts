@@ -3,7 +3,7 @@ const config = {
     apiUrl: 'http://127.0.0.1:8000/api',
   },
   production: {
-    apiUrl: 'https://bidding-compute-mar-fu.trycloudflare.com/api',
+    apiUrl: 'https://api.egde-fx.com/api',
   },
 };
 
