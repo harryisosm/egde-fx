@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     "bidding-compute-mar-fu.trycloudflare.com",
     "127.0.0.1",
     "http://localhost:8080/",
+    "[::1]",
     "*",  # Allow all hosts
 ]
 
